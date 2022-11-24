@@ -23,6 +23,7 @@ async function run() {
         const categoryCollection = client.db('marketThriftyDB').collection('categoryOption');
         const phonesCollection = client.db('marketThriftyDB').collection('phoneCollection');
         const usersCollection = client.db('marketThriftyDB').collection('usersCollection');
+        const bookingCollection = client.db('marketThriftyDB').collection('bookingCollection');
 
 
         // category
@@ -42,13 +43,33 @@ async function run() {
             res.send(result)
         });
 
-        // user
+        // booking 
+        app.get('/booking', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const result = await bookingCollection.find(query).toArray();
+            res.send(result)
+        })
 
+        app.post('/booking', async (req, res) => {
+            const booking = req.body;
+            const result = await bookingCollection.insertOne(booking);
+            res.send(result);
+        })
+
+        // user
         app.get('/users', async (req, res) => {
             const query = {}
             const users = usersCollection.find(query);
             const result = await users.toArray();
             res.send(result)
+        });
+
+        app.get('/seller', async (req, res) => {
+            const query = { option: "Seller" };
+            const seller = await usersCollection.find(query).toArray()
+            res.send(seller)
+
         })
 
         app.post('/users', async (req, res) => {
