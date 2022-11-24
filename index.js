@@ -37,11 +37,27 @@ async function run() {
         // phone
         app.get('/allphones/:id', async (req, res) => {
             const id = req.params.id
-            const query = { categoryId: id }
+            const query = { categoryName: id };
+
             const phones = phonesCollection.find(query);
             const result = await phones.toArray();
             res.send(result)
+            console.log(result)
         });
+
+        // seller product
+        app.get('/seller-product', async (req, res) => {
+            const email = req.query.email;
+            const query = { sellerEmail: email };
+            const result = await phonesCollection.find(query).toArray();
+            res.send(result)
+        })
+
+        app.post('/allphones', async (req, res) => {
+            const phone = req.body;
+            const result = await phonesCollection.insertOne(phone);
+            res.send(result);
+        })
 
         // booking 
         app.get('/booking', async (req, res) => {
