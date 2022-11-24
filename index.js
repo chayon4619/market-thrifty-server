@@ -22,6 +22,7 @@ async function run() {
 
         const categoryCollection = client.db('marketThriftyDB').collection('categoryOption');
         const phonesCollection = client.db('marketThriftyDB').collection('phoneCollection');
+        const usersCollection = client.db('marketThriftyDB').collection('usersCollection');
 
 
         // category
@@ -33,11 +34,27 @@ async function run() {
         });
 
         // phone
-        app.get('/allphones', async (req, res) => {
-            const query = {}
+        app.get('/allphones/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { categoryId: id }
             const phones = phonesCollection.find(query);
             const result = await phones.toArray();
             res.send(result)
+        });
+
+        // user
+
+        app.get('/users', async (req, res) => {
+            const query = {}
+            const users = usersCollection.find(query);
+            const result = await users.toArray();
+            res.send(result)
+        })
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
         })
 
     }
