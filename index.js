@@ -60,8 +60,11 @@ async function run() {
 
         // phone
         app.get('/allphones/:id', async (req, res) => {
-            const id = req.params.id
-            const query = { categoryName: id };
+            const id = req.params.id;
+            const query = {
+                categoryName: id,
+                isBooked: { $ne: "booked" }
+            };
 
             const phones = phonesCollection.find(query);
             const result = await phones.toArray();
@@ -115,6 +118,20 @@ async function run() {
             res.send(result);
         })
 
+        app.put('/booked/:id', verifyJWT, async (req, res) => {
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    isBooked: 'booked'
+                }
+            }
+            const result = await phonesCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
+
         // user
         app.get('/users', verifyJWT, async (req, res) => {
             const query = {}
@@ -166,6 +183,20 @@ async function run() {
             res.send(result);
         });
 
+        // app.put('/advertise/:id', verifyJWT, async (req, res) => {
+
+        //     const id = req.params.id;
+        //     const filter = { _id: ObjectId(id) }
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             isAdvertise: 'done'
+        //         }
+        //     }
+        //     const result = await phonesCollection.updateOne(filter, updatedDoc, options);
+        //     res.send(result);
+        // });
+
 
         app.delete('/seller/:id', async (req, res) => {
             const id = req.params.id;
@@ -174,6 +205,20 @@ async function run() {
             res.send(result)
         })
 
+        // report
+        app.put('/report/:id', verifyJWT, async (req, res) => {
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    isReported: 'yes'
+                }
+            }
+            const result = await phonesCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
 
 
     }
