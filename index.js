@@ -66,7 +66,6 @@ async function run() {
             const phones = phonesCollection.find(query);
             const result = await phones.toArray();
             res.send(result)
-            console.log(result)
         });
 
         // seller product
@@ -100,6 +99,13 @@ async function run() {
             const email = req.query.email;
             const query = { email: email };
             const result = await bookingCollection.find(query).toArray();
+            res.send(result)
+        });
+
+        app.get('/booking/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await bookingCollection.find(query).toArray()
             res.send(result)
         })
 
