@@ -63,13 +63,34 @@ async function run() {
             const id = req.params.id;
             const query = {
                 categoryName: id,
-                isBooked: { $ne: "booked" }
+                // isBooked: { $ne: "booked" }
             };
 
             const phones = phonesCollection.find(query);
             const result = await phones.toArray();
             res.send(result)
         });
+
+        // advertised product
+        app.get('/advertised-product', verifyJWT, async (req, res) => {
+            const query = { advertised: "done" }
+            const result = await phonesCollection.find(query).toArray();
+            res.send(result)
+        })
+
+        app.put('/advertised/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    advertised: 'done'
+                }
+            }
+            const result = await phonesCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
+
 
         // seller product
         app.get('/seller-product', async (req, res) => {
@@ -84,7 +105,7 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await phonesCollection.deleteOne(query);
             res.send(result)
-        })
+        });
 
         app.post('/allphones', async (req, res) => {
             const phone = req.body;
@@ -183,19 +204,6 @@ async function run() {
             res.send(result);
         });
 
-        // app.put('/advertise/:id', verifyJWT, async (req, res) => {
-
-        //     const id = req.params.id;
-        //     const filter = { _id: ObjectId(id) }
-        //     const options = { upsert: true };
-        //     const updatedDoc = {
-        //         $set: {
-        //             isAdvertise: 'done'
-        //         }
-        //     }
-        //     const result = await phonesCollection.updateOne(filter, updatedDoc, options);
-        //     res.send(result);
-        // });
 
 
         app.delete('/seller/:id', async (req, res) => {
