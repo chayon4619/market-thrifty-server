@@ -91,6 +91,19 @@ async function run() {
             res.send(result);
         });
 
+        // reported product
+        app.get('/reported-product', async (req, res) => {
+            const query = { isReported: "yes" }
+            const result = await phonesCollection.find(query).toArray();
+            res.send(result)
+        });
+
+        app.delete('/reported-del/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await phonesCollection.deleteOne(query);
+            res.send(result)
+        })
 
         // seller product
         app.get('/seller-product', async (req, res) => {
