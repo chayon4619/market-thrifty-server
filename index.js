@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
 
@@ -51,6 +51,13 @@ async function run() {
             const query = { sellerEmail: email };
             const result = await phonesCollection.find(query).toArray();
             res.send(result)
+        });
+
+        app.delete('/seller-product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await phonesCollection.deleteOne(query);
+            res.send(result)
         })
 
         app.post('/allphones', async (req, res) => {
@@ -81,11 +88,11 @@ async function run() {
             res.send(result)
         });
 
-        app.get('/seller', async (req, res) => {
-            const query = { option: "Seller" };
-            const seller = await usersCollection.find(query).toArray()
-            res.send(seller)
-
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
+            res.send(result)
         })
 
         app.post('/users', async (req, res) => {
@@ -93,6 +100,24 @@ async function run() {
             const result = await usersCollection.insertOne(user);
             res.send(result);
         })
+
+
+        // seller
+        app.get('/seller', async (req, res) => {
+            const query = { option: "Seller" };
+            const seller = await usersCollection.find(query).toArray()
+            res.send(seller)
+
+        });
+
+        app.delete('/seller/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
+            res.send(result)
+        })
+
+
 
     }
     finally {
