@@ -66,7 +66,7 @@ async function run() {
             const id = req.params.id;
             const query = {
                 categoryName: id,
-                // isBooked: { $ne: "booked" }
+                paid: { $ne: true }
             };
 
             const phones = phonesCollection.find(query);
@@ -76,7 +76,10 @@ async function run() {
 
         // advertised product
         app.get('/advertised-product', verifyJWT, async (req, res) => {
-            const query = { advertised: "done" }
+            const query = {
+                advertised: "done",
+                paid: { $ne: true }
+            }
             const result = await phonesCollection.find(query).toArray();
             res.send(result)
         })
@@ -87,7 +90,7 @@ async function run() {
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
-                    advertised: 'done'
+                    advertised: 'done',
                 }
             }
             const result = await phonesCollection.updateOne(filter, updatedDoc, options);
@@ -155,19 +158,19 @@ async function run() {
             res.send(result);
         })
 
-        app.put('/booked/:id', verifyJWT, async (req, res) => {
+        // app.put('/booked/:id', verifyJWT, async (req, res) => {
 
-            const id = req.params.id;
-            const filter = { _id: ObjectId(id) }
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    isBooked: 'booked'
-                }
-            }
-            const result = await phonesCollection.updateOne(filter, updatedDoc, options);
-            res.send(result);
-        });
+        //     const id = req.params.id;
+        //     const filter = { _id: ObjectId(id) }
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             isBooked: 'booked'
+        //         }
+        //     }
+        //     const result = await phonesCollection.updateOne(filter, updatedDoc, options);
+        //     res.send(result);
+        // });
 
         // user
         app.get('/users', verifyJWT, async (req, res) => {
@@ -273,6 +276,15 @@ async function run() {
                     transactionId: payment.transactionId
                 }
             }
+
+            const productId = payment.productId;
+            const search = { _id: ObjectId(productId) };
+            const updatedProduct = {
+                $set: {
+                    paid: true
+                }
+            }
+            const productResult = await phonesCollection.updateOne(search, updatedProduct)
             const updatedResult = await bookingCollection.updateOne(filter, updatedDoc);
             res.send(result)
         })
