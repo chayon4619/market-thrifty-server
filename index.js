@@ -287,8 +287,16 @@ async function run() {
             const productResult = await phonesCollection.updateOne(search, updatedProduct)
             const updatedResult = await bookingCollection.updateOne(filter, updatedDoc);
             res.send(result)
-        })
+        });
 
+        // admin
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.isAdmin === "admin" });
+            console.log(user)
+        });
 
     }
     finally {
