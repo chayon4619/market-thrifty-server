@@ -158,20 +158,6 @@ async function run() {
             res.send(result);
         })
 
-        // app.put('/booked/:id', verifyJWT, async (req, res) => {
-
-        //     const id = req.params.id;
-        //     const filter = { _id: ObjectId(id) }
-        //     const options = { upsert: true };
-        //     const updatedDoc = {
-        //         $set: {
-        //             isBooked: 'booked'
-        //         }
-        //     }
-        //     const result = await phonesCollection.updateOne(filter, updatedDoc, options);
-        //     res.send(result);
-        // });
-
         // user
         app.get('/users', verifyJWT, async (req, res) => {
             const query = {}
